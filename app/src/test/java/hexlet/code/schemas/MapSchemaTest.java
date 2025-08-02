@@ -33,7 +33,7 @@ class MapSchemaTest {
         data.put("key2", "value2");
         assertTrue(schema.isValid(data));
 
-        Map<String, BaseSchema> schemas = new HashMap<>();
+        Map<String, BaseSchema<?>> schemas = new HashMap<>();
         schemas.put("name", v.string().required());
         schemas.put("age", v.number().positive());
 

@@ -1,37 +1,50 @@
 package hexlet.code.schemas;
 
 import java.util.function.Predicate;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Objects;
 
-
-public abstract class BaseSchema {
+/**
+ * Base abstract class for all validation schemas.
+ * @param <T> Type of values this schema can validate
+ */
+public abstract class BaseSchema<T> {
     private boolean isRequired = false;
-    private final List<Predicate<Object>> checks = new ArrayList<>();
-
-    protected final void addCheck(Predicate<Object> check) {
-        checks.add(check);
-    }
+    private Predicate<T> validation = value -> true;
 
     /**
-     * Проверяет валидность значения.
-     * @param value Проверяемое значение
-     * @return true если значение соответствует схеме
+     * Checks if the value matches the validation schema.
+     * @param value Value to validate (can be null)
+     * @return true if value is valid, false otherwise
      */
-    public boolean isValid(Object value) {
+    public final boolean isValid(Object value) {
         if (value == null) {
             return !isRequired;
         }
 
-        return checks.stream().allMatch(check -> check.test(value));
+        try {
+            @SuppressWarnings("unchecked")
+            T castedValue = (T) value;
+            return validation.test(castedValue);
+        } catch (ClassCastException e) {
+            return false;
+        }
     }
 
     /**
-     * Помечает поле как обязательное.
-     * @return Текущий объект для цепочки вызовов
+     * Marks the field as required (non-null).
+     * @return Current schema instance for method chaining
      */
-    public BaseSchema required() {
-        this.isRequired = true;
+    public BaseSchema<T> required() {
+        isRequired = true;
+        addCheck(Objects::nonNull);
         return this;
+    }
+
+    /**
+     * Adds a custom validation rule.
+     * @param check Predicate to validate the value
+     */
+    protected final void addCheck(Predicate<T> check) {
+        validation = validation.and(check);
     }
 }
