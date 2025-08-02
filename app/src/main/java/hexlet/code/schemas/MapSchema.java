@@ -8,7 +8,7 @@ import java.util.HashMap;
  */
 public final class MapSchema extends BaseSchema<Map<String, Object>> {
     private int requiredSize = -1;
-    private Map<String, BaseSchema<?>> schemas = new HashMap<>();
+    private Map<String, BaseSchema<?>> shapeRules = new HashMap<>();
 
     public MapSchema() {
         addCheck(value -> value == null || value instanceof Map);
@@ -42,13 +42,13 @@ public final class MapSchema extends BaseSchema<Map<String, Object>> {
      * @return Current schema instance
      */
     public MapSchema shape(Map<String, BaseSchema<?>> schemas) {
-        this.schemas = new HashMap<>(schemas);
+        this.shapeRules = new HashMap<>(schemas);
         addCheck(this::validateShape);
         return this;
     }
 
     private boolean validateShape(Map<String, Object> map) {
-        return schemas.entrySet().stream()
+        return shapeRules.entrySet().stream()
                 .allMatch(entry -> {
                     Object value = map.get(entry.getKey());
                     return entry.getValue().isValid(value);

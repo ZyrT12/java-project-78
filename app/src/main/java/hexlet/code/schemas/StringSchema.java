@@ -5,7 +5,7 @@ package hexlet.code.schemas;
  */
 public final class StringSchema extends BaseSchema<String> {
     private int minLength = 0;
-    private String substring = "";
+    private String requiredSubstring = "";
 
     public StringSchema() {
         addCheck(value -> true);
@@ -39,7 +39,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return Current schema instance
      */
     public StringSchema contains(String substring) {
-        this.substring = substring;
+        this.requiredSubstring = substring;
         addCheck(value -> value.contains(substring));
         return this;
     }
