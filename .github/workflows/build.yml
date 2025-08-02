@@ -8,7 +8,6 @@ on:
 jobs:
   build:
     name: Build and analyze
-    working-directory: app
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -37,4 +36,4 @@ jobs:
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+        run: ./gradlew -p app build sonar --info
