@@ -2,7 +2,7 @@ package hexlet.code.schemas;
 
 public final class StringSchema extends BaseSchema {
     private int minLength = 0;
-    private String substring = "";
+    private String requiredSubstring = "";
 
     public StringSchema() {
         addCheck(value -> value instanceof String);
@@ -21,7 +21,7 @@ public final class StringSchema extends BaseSchema {
     }
 
     public StringSchema contains(String substring) {
-        this.substring = substring;
+        this.requiredSubstring = substring;
         addCheck(value -> ((String) value).contains(substring));
         return this;
     }
