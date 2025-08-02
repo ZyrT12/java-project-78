@@ -1,34 +1,40 @@
 package hexlet.code.schemas;
 
 import java.util.Map;
+import java.util.HashMap;
 
 public final class MapSchema extends BaseSchema {
+    private int requiredSize = -1; // -1 означает отсутствие проверки на размер
+    private Map<String, BaseSchema> shapeSchemas;
+
+    public MapSchema() {
+        addCheck(value -> value == null || value instanceof Map);
+    }
+
+    @Override
     public MapSchema required() {
-        setRequired(true);
-        addCheck("required", value -> value instanceof Map);
+        super.required();
+        addCheck(value -> value instanceof Map);
         return this;
     }
 
     public MapSchema sizeof(int size) {
-        addCheck("sizeof", value ->
-                value instanceof Map && ((Map<?, ?>) value).size() == size
-        );
+        this.requiredSize = size;
+        addCheck(value -> requiredSize < 0 ||
+                (value instanceof Map && ((Map<?, ?>) value).size() == requiredSize));
         return this;
     }
 
     public MapSchema shape(Map<String, BaseSchema> schemas) {
-        addCheck("shape", value -> {
-            if (!(value instanceof Map)) {
-                return false;
-            }
-
+        this.shapeSchemas = schemas;
+        addCheck(value -> {
+            if (!(value instanceof Map)) return false;
             Map<?, ?> map = (Map<?, ?>) value;
-            return schemas.entrySet().stream().allMatch(entry -> {
-                String key = entry.getKey();
-                BaseSchema schema = entry.getValue();
-                Object mapValue = map.get(key);
-                return schema.isValid(mapValue);
-            });
+            return shapeSchemas.entrySet().stream()
+                    .allMatch(entry -> {
+                        Object val = map.get(entry.getKey());
+                        return entry.getValue().isValid(val);
+                    });
         });
         return this;
     }

@@ -23,9 +23,6 @@ install:
 run:
 	make -C app run
 
-test:
-	make -C app test
-
 report:
 	.make -C app jacocoTestReport
 

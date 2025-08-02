@@ -1,23 +1,32 @@
 package hexlet.code.schemas;
 
 public final class NumberSchema extends BaseSchema {
+    private boolean isPositive = false;
+    private Integer rangeStart = null;
+    private Integer rangeEnd = null;
+
+    public NumberSchema() {
+        addCheck(value -> value instanceof Integer);
+    }
+
     public NumberSchema required() {
-        setRequired(true);
-        addCheck("required", value -> value != null);
+        super.required();
         return this;
     }
 
     public NumberSchema positive() {
-        addCheck("positive", value ->
-                value == null || (value instanceof Integer && (Integer) value > 0)
-        );
+        this.isPositive = true;
+        addCheck(value -> (Integer) value > 0);
         return this;
     }
 
-    public NumberSchema range(int min, int max) {
-        addCheck("range", value ->
-                value instanceof Integer && (Integer) value >= min && (Integer) value <= max
-        );
+    public NumberSchema range(int start, int end) {
+        this.rangeStart = start;
+        this.rangeEnd = end;
+        addCheck(value -> {
+            int num = (Integer) value;
+            return num >= start && num <= end;
+        });
         return this;
     }
 }

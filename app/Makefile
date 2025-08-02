@@ -17,9 +17,6 @@ install:
 run:
 	./gradlew run
 
-test:
-	./gradlew test
-
 report:
 	./gradlew jacocoTestReport
 
