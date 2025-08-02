@@ -1,0 +1,10 @@
+# IntelliJ IDEA
+app/.idea/
+*.iml
+
+# Gradle build output
+app/build/
+app/.gradle/
+
+# Gradle wrapper logs
+app/*.log
