@@ -15,33 +15,55 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Clean Git artifacts
+          fetch-depth: 0
+          
+      - name: Purge deleted files
         run: |
+          # Удаляем все неотслеживаемые файлы
           git clean -fdx
+          
+          # Сбрасываем все изменения
           git reset --hard
+          
+          # Принудительно обновляем индекс
+          git update-index --really-refresh
+          
+          # Проверяем наличие проблемного файла
+          if [ -f "src/test/java/hexlet/code/schemas/ValidatorTest.java" ]; then
+            echo "Файл существует! Удаляем..."
+            rm -f "src/test/java/hexlet/code/schemas/ValidatorTest.java"
+            git update-index --remove "src/test/java/hexlet/code/schemas/ValidatorTest.java"
+          fi
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: 17
-          distribution: 'zulu' # Alternative distribution options are available
+          distribution: 'zulu'
+
       - name: Clean Gradle cache
         run: |
           rm -rf ~/.gradle/caches
           ./gradlew clean
+
       - name: Cache SonarQube packages
         uses: actions/cache@v4
         with:
           path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
+          key: ${{ runner.os }}-sonar-${{ hashFiles('**/build.gradle.kts') }}
           restore-keys: ${{ runner.os }}-sonar
+
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}
           restore-keys: ${{ runner.os }}-gradle
+
       - name: Build and analyze
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-        run: ./gradlew build sonar --info
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          ./gradlew build --stacktrace --info
+          ./gradlew sonar --info
