@@ -39,4 +39,4 @@ bin/
 .vscode/
 
 ### Mac OS ###
-.DS_Store
+.DS_Storeapp/src/test/java/hexlet/code/schemas/ValidatorTest.java
