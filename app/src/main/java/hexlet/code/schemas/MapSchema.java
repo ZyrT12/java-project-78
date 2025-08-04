@@ -2,7 +2,10 @@ package hexlet.code.schemas;
 
 import java.util.Map;
 
-public class MapSchema extends BaseSchema<Map<?, ?>> {
+/**
+ * Schema for validating Map objects.
+ */
+public final class MapSchema extends BaseSchema<Map<?, ?>> {
     private Map<String, BaseSchema<?>> schemas;
     private boolean required = false;
     private Integer size;
@@ -19,11 +22,11 @@ public class MapSchema extends BaseSchema<Map<?, ?>> {
 
         Map<?, ?> mapValue = (Map<?, ?>) value;
 
-        if (size != null && mapValue.size() != size) {
+        if (this.size != null && mapValue.size() != this.size) {
             return false;
         }
 
-        if (schemas != null) {
+        if (this.schemas != null) {
             return validateShape(mapValue);
         }
 
@@ -42,18 +45,32 @@ public class MapSchema extends BaseSchema<Map<?, ?>> {
         return true;
     }
 
+    /**
+     * Sets the schema as required (non-null).
+     * @return this schema instance
+     */
     public MapSchema required() {
         this.required = true;
         return this;
     }
 
-    public MapSchema sizeof(int size) {
-        this.size = size;
+    /**
+     * Sets the required size for the map.
+     * @param mapSize required size of the map
+     * @return this schema instance
+     */
+    public MapSchema sizeof(int mapSize) {
+        this.size = mapSize;
         return this;
     }
 
-    public MapSchema shape(Map<String, BaseSchema<?>> schemas) {
-        this.schemas = schemas;
+    /**
+     * Defines the shape of the map with schemas for each key.
+     * @param shapeSchemas map of schemas for validation
+     * @return this schema instance
+     */
+    public MapSchema shape(Map<String, BaseSchema<?>> shapeSchemas) {
+        this.schemas = shapeSchemas;
         return this;
     }
 }
