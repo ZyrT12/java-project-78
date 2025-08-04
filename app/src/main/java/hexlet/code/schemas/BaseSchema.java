@@ -16,7 +16,7 @@ public abstract class BaseSchema<T> {
      * @param value Value to validate (can be null)
      * @return true if value is valid, false otherwise
      */
-    public final boolean isValid(Object value) {
+    public boolean isValid(Object value) {
         if (value == null) {
             return !isRequired;
         }
