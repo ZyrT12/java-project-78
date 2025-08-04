@@ -51,10 +51,11 @@ public final class MapSchema extends BaseSchema<Map<?, ?>> {
         return this;
     }
 
-    public MapSchema sizeof(int size) {
-        this.size = size;
+    public MapSchema sizeof(int newSize) {
+        this.size = newSize;
         return this;
     }
+
 
     public <T> MapSchema shape(Map<String, BaseSchema<T>> shapeSchemas) {
         this.schemas = new HashMap<>(shapeSchemas);
