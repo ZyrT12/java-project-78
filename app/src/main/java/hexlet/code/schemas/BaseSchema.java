@@ -4,62 +4,62 @@ import java.util.function.Predicate;
 import java.util.Objects;
 
 /**
- * Base schema class that provides common validation functionality.
- * Designed for extension by specific schema types.
+ * Базовый класс схемы валидации.
+ * Предоставляет общую функциональность для всех схем валидации.
  */
 public abstract class BaseSchema<T> {
-    private boolean isRequired;
-    private Predicate<T> validation = value -> true;
+    private boolean required;  // флаг обязательности значения
+    private Predicate<T> validation = value -> true;  // предикат для валидации
 
     /**
-     * Validates the given value against the schema rules.
-     * @param value The value to validate
-     * @return true if the value is valid according to the schema, false otherwise
+     * Проверяет валидность значения согласно схеме.
+     * @param value Проверяемое значение (может быть null)
+     * @return true если значение валидно, false если нет
      */
     @SuppressWarnings("unchecked")
     public boolean isValid(Object value) {
         if (value == null) {
-            return !isRequired;
+            return !required;  // null допустим только если поле не обязательное
         }
 
         try {
-            return validation.test((T) value);
+            return validation.test((T) value);  // проверка значения
         } catch (ClassCastException e) {
-            return false;
+            return false;  // неверный тип
         }
     }
 
     /**
-     * Marks the field as required, meaning null values will be considered invalid.
-     * @return the current schema instance for method chaining
+     * Устанавливает поле как обязательное (не может быть null).
+     * @return текущий объект схемы для цепочки вызовов
      */
-    public BaseSchema<T> required() {
-        isRequired = true;
-        addCheck(Objects::nonNull);
+    public  BaseSchema<T> required() {
+        required = true;
+        addCheck(Objects::nonNull);  // добавляем проверку на null
         return this;
     }
 
     /**
-     * Adds a new validation check to the schema.
-     * @param check The predicate to add as a validation check
+     * Добавляет новое правило валидации.
+     * @param check Предикат для проверки значения
      */
     protected final void addCheck(Predicate<T> check) {
-        validation = validation.and(check);
+        validation = validation.and(check);  // комбинируем предикаты
     }
 
     /**
-     * Gets the required status of the schema.
-     * @return true if the schema is marked as required
+     * Проверяет, является ли поле обязательным.
+     * @return true если поле обязательное
      */
-    protected boolean getIsRequired() {
-        return isRequired;
+    protected final boolean isRequired() {
+        return required;
     }
 
     /**
-     * Gets the current validation predicate.
-     * @return the current validation predicate
+     * Возвращает текущий предикат валидации.
+     * @return предикат валидации
      */
-    protected Predicate<T> getValidation() {
+    protected final Predicate<T> getValidation() {
         return validation;
     }
 }
