@@ -1,10 +1,8 @@
 package hexlet.code.schemas;
 
 import java.util.Map;
+import java.util.HashMap;
 
-/**
- * Schema for validating Map objects.
- */
 public final class MapSchema extends BaseSchema<Map<?, ?>> {
     private Map<String, BaseSchema<?>> schemas;
     private boolean required = false;
@@ -20,57 +18,46 @@ public final class MapSchema extends BaseSchema<Map<?, ?>> {
             return false;
         }
 
-        Map<?, ?> mapValue = (Map<?, ?>) value;
+        Map<?, ?> map = (Map<?, ?>) value;
 
-        if (this.size != null && mapValue.size() != this.size) {
+        if (size != null && map.size() != size) {
             return false;
         }
 
-        if (this.schemas != null) {
-            return validateShape(mapValue);
+        if (schemas != null) {
+            return validateShape(map);
         }
 
         return true;
     }
 
     private boolean validateShape(Map<?, ?> map) {
-        for (Map.Entry<String, BaseSchema<?>> entry : schemas.entrySet()) {
-            String key = entry.getKey();
-            BaseSchema<?> schema = entry.getValue();
+        return schemas.entrySet().stream()
+                .allMatch(entry -> {
+                    String key = entry.getKey();
+                    BaseSchema<?> schema = entry.getValue();
+                    Object value = map.get(key);
 
-            if (!map.containsKey(key) || !schema.isValid(map.get(key))) {
-                return false;
-            }
-        }
-        return true;
+                    // Специальная обработка для String схем
+                    if (schema instanceof StringSchema) {
+                        return value != null && ((StringSchema) schema).isValid(value.toString());
+                    }
+                    return value != null && schema.isValid(value);
+                });
     }
 
-    /**
-     * Sets the schema as required (non-null).
-     * @return this schema instance
-     */
     public MapSchema required() {
         this.required = true;
         return this;
     }
 
-    /**
-     * Sets the required size for the map.
-     * @param mapSize required size of the map
-     * @return this schema instance
-     */
-    public MapSchema sizeof(int mapSize) {
-        this.size = mapSize;
+    public MapSchema sizeof(int size) {
+        this.size = size;
         return this;
     }
 
-    /**
-     * Defines the shape of the map with schemas for each key.
-     * @param shapeSchemas map of schemas for validation
-     * @return this schema instance
-     */
-    public MapSchema shape(Map<String, BaseSchema<?>> shapeSchemas) {
-        this.schemas = shapeSchemas;
+    public <T> MapSchema shape(Map<String, BaseSchema<T>> shapeSchemas) {
+        this.schemas = new HashMap<>(shapeSchemas);
         return this;
     }
 }
