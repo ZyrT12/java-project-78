@@ -6,6 +6,8 @@ import java.util.Objects;
 /**
  * Базовый класс схемы валидации.
  * Предоставляет общую функциональность для всех схем валидации.
+ *
+ * @param <T> тип значений, которые валидирует эта схема
  */
 public abstract class BaseSchema<T> {
     private boolean required;  // флаг обязательности значения
@@ -33,7 +35,7 @@ public abstract class BaseSchema<T> {
      * Устанавливает поле как обязательное (не может быть null).
      * @return текущий объект схемы для цепочки вызовов
      */
-    public  BaseSchema<T> required() {
+    public BaseSchema<T> required() {
         required = true;
         addCheck(Objects::nonNull);  // добавляем проверку на null
         return this;
