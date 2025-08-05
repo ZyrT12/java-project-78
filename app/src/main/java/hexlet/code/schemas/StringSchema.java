@@ -1,21 +1,18 @@
 package hexlet.code.schemas;
 
+import java.util.Objects;
+
 /**
  * Schema for string values validation.
  */
 public final class StringSchema extends BaseSchema<String> {
-    @Override
-    protected boolean isInstance(Object value) {
-        return value == null || value instanceof String;
-    }
-
     /**
      * Sets the field as required (non-null and non-empty).
      * @return Current schema instance
      */
     @Override
     public StringSchema required() {
-        super.required();
+        addCheck(Objects::nonNull);
         addCheck(value -> !value.isEmpty());
         return this;
     }
@@ -38,5 +35,10 @@ public final class StringSchema extends BaseSchema<String> {
     public StringSchema contains(String substring) {
         addCheck(value -> value.contains(substring));
         return this;
+    }
+
+    @Override
+    protected boolean isInstance(Object value) {
+        return value == null || value instanceof String;
     }
 }

@@ -6,7 +6,6 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class StringSchemaTest {
-    private static final int MIN_LENGTH_3 = 3;
 
     @Test
     void testBasicValidation() {
@@ -28,7 +27,7 @@ class StringSchemaTest {
 
     @Test
     void testMinLength() {
-        var schema = new Validator().string().minLength(MIN_LENGTH_3);
+        var schema = new Validator().string().minLength(3);
         assertTrue(schema.isValid("hex"));
         assertFalse(schema.isValid("he"));
     }
