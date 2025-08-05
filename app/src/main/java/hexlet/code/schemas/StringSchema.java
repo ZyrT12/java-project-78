@@ -19,8 +19,8 @@ public final class StringSchema extends BaseSchema<String> {
      */
     @Override
     public StringSchema required() {
-        super.required();
-        addCheck(value -> value != null && !value.isEmpty());
+        super.required();  
+        addCheck(value -> value != null && !value.isEmpty()); // Плюс пустая строка недопустима
         return this;
     }
 
@@ -31,7 +31,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return the current schema instance
      */
     public StringSchema minLength(int length) {
-        addCheck(value -> value != null && value.length() >= length);
+        addCheck(value -> value == null || value.length() >= length);
         return this;
     }
 
@@ -42,9 +42,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return the current schema instance
      */
     public StringSchema contains(String substring) {
-        addCheck(value -> value != null && value.contains(substring));
+        addCheck(value -> value == null || value.contains(substring));
         return this;
     }
-
-
 }
