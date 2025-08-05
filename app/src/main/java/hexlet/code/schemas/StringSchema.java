@@ -20,7 +20,7 @@ public final class StringSchema extends BaseSchema<String> {
     @Override
     public StringSchema required() {
         super.required();
-        addCheck(value -> !value.isEmpty());
+        addCheck(value -> value != null && !value.isEmpty());
         return this;
     }
 
