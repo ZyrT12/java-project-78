@@ -19,8 +19,8 @@ public final class StringSchema extends BaseSchema<String> {
      */
     @Override
     public StringSchema required() {
-        super.required();  
-        addCheck(value -> value != null && !value.isEmpty()); // Плюс пустая строка недопустима
+        super.required();
+        addCheck(value -> value != null && !value.isEmpty());
         return this;
     }
 
