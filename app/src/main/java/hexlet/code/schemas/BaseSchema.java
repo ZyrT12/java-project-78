@@ -2,11 +2,22 @@ package hexlet.code.schemas;
 
 import java.util.function.Predicate;
 import java.util.Objects;
+import java.util.ArrayList;
+import java.util.List;
 
+/**
+ * Base schema class for validation.
+ * @param <T> Type of value to validate
+ */
 public abstract class BaseSchema<T> {
     private boolean required;
-    private Predicate<T> validation = value -> true;
+    private final List<Predicate<T>> checks = new ArrayList<>();
 
+    /**
+     * Validates the value against all checks.
+     * @param value Value to validate
+     * @return true if valid, false otherwise
+     */
     public boolean isValid(Object value) {
         if (value == null) {
             return !required;
@@ -18,9 +29,13 @@ public abstract class BaseSchema<T> {
 
         @SuppressWarnings("unchecked")
         T castedValue = (T) value;
-        return validation.test(castedValue);
+        return checks.stream().allMatch(check -> check.test(castedValue));
     }
 
+    /**
+     * Makes the field required.
+     * @return Current schema instance
+     */
     public BaseSchema<T> required() {
         this.required = true;
         addCheck(Objects::nonNull);
@@ -28,7 +43,7 @@ public abstract class BaseSchema<T> {
     }
 
     protected final void addCheck(Predicate<T> check) {
-        validation = validation.and(check);
+        checks.add(check);
     }
 
     protected abstract boolean isInstance(Object value);

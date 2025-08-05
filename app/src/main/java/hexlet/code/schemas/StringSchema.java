@@ -4,6 +4,11 @@ package hexlet.code.schemas;
  * Schema for string values validation.
  */
 public final class StringSchema extends BaseSchema<String> {
+    @Override
+    protected boolean isInstance(Object value) {
+        return value == null || value instanceof String;
+    }
+
     /**
      * Sets the field as required (non-null and non-empty).
      * @return Current schema instance
@@ -33,10 +38,5 @@ public final class StringSchema extends BaseSchema<String> {
     public StringSchema contains(String substring) {
         addCheck(value -> value.contains(substring));
         return this;
-    }
-
-    @Override
-    protected boolean isInstance(Object value) {
-        return value == null || value instanceof String;
     }
 }
