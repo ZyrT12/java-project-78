@@ -2,41 +2,33 @@ package hexlet.code.schemas;
 
 import hexlet.code.Validator;
 import org.junit.jupiter.api.Test;
-import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 class StringSchemaTest {
-    private static final int MIN_LENGTH_3 = 3;
 
     @Test
-    void testBasicValidation() {
+    void stringIsValid() {
         Validator v = new Validator();
-        var schema = v.string();
+        StringSchema schema = v.string();
 
-        assertTrue(schema.isValid(null));
-        assertTrue(schema.isValid(""));
-        assertTrue(schema.isValid("test"));
-    }
+        assertThat(schema.isValid("")).isTrue();
 
-    @Test
-    void testRequired() {
-        var schema = new Validator().string().required();
-        assertFalse(schema.isValid(null));
-        assertFalse(schema.isValid(""));
-        assertTrue(schema.isValid("hello"));
-    }
+        schema.required();
+        assertThat(schema.isValid("what does the fox say")).isTrue();
+        assertThat(schema.isValid("hexlet")).isTrue();
+        assertThat(schema.isValid("")).isFalse();
+        assertThat(schema.isValid(null)).isFalse();
 
-    @Test
-    void testMinLength() {
-        var schema = new Validator().string().minLength(MIN_LENGTH_3);
-        assertTrue(schema.isValid("hex"));
-        assertFalse(schema.isValid("he"));
-    }
+        schema.minLength(7);
+        assertThat(schema.isValid("what does the fox say")).isTrue();
+        assertThat(schema.isValid("hexlet")).isFalse();
 
-    @Test
-    void testContains() {
-        var schema = new Validator().string().contains("ex");
-        assertTrue(schema.isValid("hexlet"));
-        assertFalse(schema.isValid("hello"));
+        assertThat(
+                schema.contains("what").isValid("what does the fox say")
+        ).isTrue();
+
+        assertThat(
+                schema.contains("whatthe").isValid("what does the fox say")
+        ).isFalse();
     }
 }
