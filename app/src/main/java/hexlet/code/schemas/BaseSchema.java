@@ -6,17 +6,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Base schema class for validation.
- * @param <T> Type of value to validate
+ * Base validation schema for all data types.
+ * Provides common validation functionality.
+ * @param <T> Type of values to validate
  */
 public abstract class BaseSchema<T> {
-    private boolean required;
     private final List<Predicate<T>> checks = new ArrayList<>();
+    private boolean required = false;
 
     /**
-     * Validates the value against all checks.
-     * @param value Value to validate
-     * @return true if valid, false otherwise
+     * Validates the value against all defined checks.
+     * @param value Value to validate (can be null)
+     * @return true if value is valid, false otherwise
      */
     public boolean isValid(Object value) {
         if (value == null) {
@@ -33,8 +34,8 @@ public abstract class BaseSchema<T> {
     }
 
     /**
-     * Makes the field required.
-     * @return Current schema instance
+     * Makes the field required (non-null).
+     * @return Current schema instance for method chaining
      */
     public BaseSchema<T> required() {
         this.required = true;
@@ -42,9 +43,18 @@ public abstract class BaseSchema<T> {
         return this;
     }
 
+    /**
+     * Adds a new validation check.
+     * @param check Predicate to validate values
+     */
     protected final void addCheck(Predicate<T> check) {
         checks.add(check);
     }
 
+    /**
+     * Checks if value is of correct type for this schema.
+     * @param value Value to check
+     * @return true if value has correct type
+     */
     protected abstract boolean isInstance(Object value);
 }

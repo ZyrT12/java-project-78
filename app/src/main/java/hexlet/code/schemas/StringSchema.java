@@ -6,6 +6,11 @@ import java.util.Objects;
  * Schema for string values validation.
  */
 public final class StringSchema extends BaseSchema<String> {
+    @Override
+    protected boolean isInstance(Object value) {
+        return value == null || value instanceof String;
+    }
+
     /**
      * Sets the field as required (non-null and non-empty).
      * @return Current schema instance
@@ -23,7 +28,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return Current schema instance
      */
     public StringSchema minLength(int length) {
-        addCheck(value -> value.length() >= length);
+        addCheck(value -> value == null || value.length() >= length);
         return this;
     }
 
@@ -33,12 +38,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return Current schema instance
      */
     public StringSchema contains(String substring) {
-        addCheck(value -> value.contains(substring));
+        addCheck(value -> value == null || value.contains(substring));
         return this;
-    }
-
-    @Override
-    protected boolean isInstance(Object value) {
-        return value == null || value instanceof String;
     }
 }
