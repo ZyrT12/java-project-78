@@ -1,32 +1,47 @@
 package hexlet.code.schemas;
 
 /**
- * Schema for validating numeric values.
- * Supports positive numbers and range validation.
+ * Validation schema for numeric (Integer) values.
  */
 public final class NumberSchema extends BaseSchema<Integer> {
-    @Override
-    protected boolean isInstance(Object value) {
-        return value == null || value instanceof Integer;
+
+    /**
+     * Default constructor with initial no-op check.
+     */
+    public NumberSchema() {
+        addCheck(v -> true);
     }
 
     /**
-     * Validates that number is positive (> 0).
-     * @return Current schema instance for method chaining
+     * Marks the number as required (non-null).
+     *
+     * @return the current schema instance
      */
-    public NumberSchema positive() {
-        addCheck(value -> value == null || value > 0);
+    @Override
+    public NumberSchema required() {
+        super.required();
         return this;
     }
 
     /**
-     * Sets allowed value range (inclusive).
-     * @param min Minimum allowed value (inclusive)
-     * @param max Maximum allowed value (inclusive)
-     * @return Current schema instance for method chaining
+     * Adds a rule that the number must be positive (> 0).
+     *
+     * @return the current schema instance
      */
-    public NumberSchema range(int min, int max) {
-        addCheck(value -> value == null || (value >= min && value <= max));
+    public NumberSchema positive() {
+        addCheck(value -> value > 0);
+        return this;
+    }
+
+    /**
+     * Adds a rule that the number must be within the given inclusive range.
+     *
+     * @param start minimum allowed value
+     * @param end maximum allowed value
+     * @return the current schema instance
+     */
+    public NumberSchema range(int start, int end) {
+        addCheck(value -> value >= start && value <= end);
         return this;
     }
 }

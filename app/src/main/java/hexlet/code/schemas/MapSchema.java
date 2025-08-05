@@ -1,49 +1,50 @@
 package hexlet.code.schemas;
 
 import java.util.Map;
-import java.util.HashMap;
 
 /**
- * Schema for validating Map objects.
- * Supports size validation and shape validation.
+ * Validation schema for map values.
  */
 public final class MapSchema extends BaseSchema<Map<?, ?>> {
-    private Map<String, BaseSchema<?>> schemas;
-    private Integer sizeRequirement;
 
-    @Override
-    protected boolean isInstance(Object value) {
-        return value instanceof Map;
+    /**
+     * Marks the map as required (non-null and instance of Map).
+     *
+     * @return the current schema instance
+     */
+    public MapSchema required() {
+        super.required();
+        addCheck(value -> value instanceof Map);
+        return this;
     }
 
     /**
-     * Sets required size for the map.
-     * @param size Required map size
-     * @return Current schema instance for method chaining
+     * Adds a rule that the map must contain exactly the given number of entries.
+     *
+     * @param size the expected size of the map
+     * @return the current schema instance
      */
     public MapSchema sizeof(int size) {
-        this.sizeRequirement = size;
         addCheck(map -> map.size() == size);
         return this;
     }
 
     /**
-     * Sets validation schema for map values by key.
-     * @param schemas Map of schemas for validation
-     * @return Current schema instance for method chaining
+     * Adds a rule to validate the shape of the map, based on expected keys and their respective schemas.
+     *
+     * @param schemas a map of expected keys and their corresponding validation schemas
+     * @param <T> the type of the values in the map
+     * @return the current schema instance
      */
-    public MapSchema shape(Map<String, BaseSchema<String>> schemas) {
-        this.schemas = new HashMap<>(schemas);
-        addCheck(this::validateShape);
-        return this;
-    }
-
-    private boolean validateShape(Map<?, ?> map) {
-        return schemas.entrySet().stream()
+    public <T> MapSchema shape(Map<String, BaseSchema<T>> schemas) {
+        addCheck(map -> schemas.entrySet().stream()
                 .allMatch(entry -> {
-                    Object value = map.get(entry.getKey());
+                    String key = entry.getKey();
                     BaseSchema<?> schema = entry.getValue();
-                    return value != null && schema.isValid(value);
-                });
+                    Object value = map.get(key);
+                    return schema.isValid(value);
+                })
+        );
+        return this;
     }
 }

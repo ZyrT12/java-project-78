@@ -1,48 +1,48 @@
 package hexlet.code.schemas;
 
-import java.util.Objects;
-
 /**
- * Schema for validating string values.
- * Supports required, min length and substring checks.
+ * Validation schema for string values.
  */
 public final class StringSchema extends BaseSchema<String> {
-    private boolean isRequired = false;
 
-    @Override
-    protected boolean isInstance(Object value) {
-        return value == null || value instanceof String;
+    /**
+     * Default constructor with initial no-op check.
+     */
+    public StringSchema() {
+        addCheck(v -> true);
     }
 
     /**
-     * Makes the string required (non-null and non-empty).
-     * @return Current schema instance for method chaining
+     * Marks the string as required (non-null and non-empty).
+     *
+     * @return the current schema instance
      */
     @Override
     public StringSchema required() {
-        this.isRequired = true;
-        addCheck(Objects::nonNull);
-        addCheck(value -> !((String) value).isEmpty());
+        super.required();
+        addCheck(value -> !value.isEmpty());
         return this;
     }
 
     /**
-     * Sets minimum string length requirement.
-     * @param length Minimum allowed length
-     * @return Current schema instance for method chaining
+     * Adds a rule that the string must have at least the given length.
+     *
+     * @param length minimum length required
+     * @return the current schema instance
      */
     public StringSchema minLength(int length) {
-        addCheck(value -> !isRequired || value == null || ((String) value).length() >= length);
+        addCheck(value -> value.length() >= length);
         return this;
     }
 
     /**
-     * Sets required substring presence.
-     * @param substring Substring that must be present
-     * @return Current schema instance for method chaining
+     * Adds a rule that the string must contain the specified substring.
+     *
+     * @param substring the substring that must be present
+     * @return the current schema instance
      */
     public StringSchema contains(String substring) {
-        addCheck(value -> !isRequired || value == null || ((String) value).contains(substring));
+        addCheck(value -> value.contains(substring));
         return this;
     }
 }
