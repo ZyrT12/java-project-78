@@ -5,30 +5,28 @@ import java.util.HashMap;
 
 public final class MapSchema extends BaseSchema<Map<?, ?>> {
     private Map<String, BaseSchema<?>> schemas;
-    private boolean required = false;
     private Integer size;
 
     @Override
-    public boolean isValid(Object value) {
-        if (value == null) {
-            return !required;
-        }
+    protected boolean isInstance(Object value) {
+        return value instanceof Map;
+    }
 
-        if (!(value instanceof Map)) {
-            return false;
-        }
+    public MapSchema required() {
+        super.required();
+        return this;
+    }
 
-        Map<?, ?> map = (Map<?, ?>) value;
+    public MapSchema sizeof(int size) {
+        this.size = size;
+        addCheck(map -> map.size() == size);
+        return this;
+    }
 
-        if (size != null && map.size() != size) {
-            return false;
-        }
-
-        if (schemas != null) {
-            return validateShape(map);
-        }
-
-        return true;
+    public MapSchema shape(Map<String, BaseSchema<String>> schemas) {
+        this.schemas = new HashMap<>(schemas);
+        addCheck(this::validateShape);
+        return this;
     }
 
     private boolean validateShape(Map<?, ?> map) {
@@ -37,28 +35,7 @@ public final class MapSchema extends BaseSchema<Map<?, ?>> {
                     String key = entry.getKey();
                     BaseSchema<?> schema = entry.getValue();
                     Object value = map.get(key);
-
-                    // Специальная обработка для String схем
-                    if (schema instanceof StringSchema) {
-                        return value != null && ((StringSchema) schema).isValid(value.toString());
-                    }
                     return value != null && schema.isValid(value);
                 });
-    }
-
-    public MapSchema required() {
-        this.required = true;
-        return this;
-    }
-
-    public MapSchema sizeof(int newSize) {
-        this.size = newSize;
-        return this;
-    }
-
-
-    public <T> MapSchema shape(Map<String, BaseSchema<T>> shapeSchemas) {
-        this.schemas = new HashMap<>(shapeSchemas);
-        return this;
     }
 }

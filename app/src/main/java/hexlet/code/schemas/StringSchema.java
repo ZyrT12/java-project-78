@@ -4,13 +4,6 @@ package hexlet.code.schemas;
  * Schema for string values validation.
  */
 public final class StringSchema extends BaseSchema<String> {
-    private int minLength = 0;
-    private String requiredSubstring = "";
-
-    public StringSchema() {
-        addCheck(value -> true);
-    }
-
     /**
      * Sets the field as required (non-null and non-empty).
      * @return Current schema instance
@@ -28,8 +21,7 @@ public final class StringSchema extends BaseSchema<String> {
      * @return Current schema instance
      */
     public StringSchema minLength(int length) {
-        this.minLength = length;
-        addCheck(value -> value.length() >= minLength);
+        addCheck(value -> value.length() >= length);
         return this;
     }
 
@@ -39,8 +31,12 @@ public final class StringSchema extends BaseSchema<String> {
      * @return Current schema instance
      */
     public StringSchema contains(String substring) {
-        this.requiredSubstring = substring;
         addCheck(value -> value.contains(substring));
         return this;
+    }
+
+    @Override
+    protected boolean isInstance(Object value) {
+        return value == null || value instanceof String;
     }
 }
