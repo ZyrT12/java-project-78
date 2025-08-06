@@ -1,9 +1,13 @@
 package hexlet.code.schemas;
 
+import java.util.Objects;
+
 /**
  * Validation schema for string values.
  */
 public final class StringSchema extends BaseSchema<String> {
+
+    private int minLength = 0;
 
     /**
      * Default constructor with initial no-op check.
@@ -31,7 +35,8 @@ public final class StringSchema extends BaseSchema<String> {
      * @return the current schema instance
      */
     public StringSchema minLength(int length) {
-        addCheck(value -> value == null || value.length() >= length);
+        this.minLength = length;
+        addCheck(value -> value == null || value.length() >= minLength);
         return this;
     }
 

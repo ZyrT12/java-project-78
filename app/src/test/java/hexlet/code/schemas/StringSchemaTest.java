@@ -8,8 +8,8 @@ class StringSchemaTest {
 
     @Test
     void stringIsValid() {
-        Validator v = new Validator();
-        StringSchema schema = v.string();
+        var v = new Validator();
+        var schema = v.string();
 
         assertThat(schema.isValid("")).isTrue();
 
@@ -30,5 +30,8 @@ class StringSchemaTest {
         assertThat(
                 schema.contains("whatthe").isValid("what does the fox say")
         ).isFalse();
+
+        var schema1 = v.string().required().minLength(10).minLength(4);
+        assertThat(schema1.isValid("hexlet")).isTrue();
     }
 }
