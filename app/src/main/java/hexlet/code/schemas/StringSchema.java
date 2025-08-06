@@ -1,7 +1,5 @@
 package hexlet.code.schemas;
 
-import java.util.Objects;
-
 /**
  * Validation schema for string values.
  */
